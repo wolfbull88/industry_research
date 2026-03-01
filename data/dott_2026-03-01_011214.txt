@@ -1,0 +1,10 @@
+/press-release/dott-raises-new-funding/
+/press-release/feed/
+/press-release/?_pagination=1
+/press-release/?_pagination=10
+/press-release/?_pagination=11
+/press-release/?_pagination=12
+/press-release/?_pagination=13
+/press-release/?_pagination=2
+/press-release/?_pagination=3
+/press-release/?_pagination=4

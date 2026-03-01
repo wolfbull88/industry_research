@@ -1,0 +1,10 @@
+/blog/\
+/blog/an-open-letter-to-the-entire-food-delivery-industry/
+/blog/an-open-letter-to-the-entire-food-delivery-industry/\
+/blog/bolt-internship/
+/blog/bolt-internship/\
+/blog/bolt-ponyai-autonomous-driving-europe/
+/blog/bolt-ponyai-autonomous-driving-europe/\
+/blog/bolt-secures-220m-revolving-credit-facility/
+/blog/bolt-secures-220m-revolving-credit-facility/\
+/blog/bolt-send-package-delivery/
