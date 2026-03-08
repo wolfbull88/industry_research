@@ -12,6 +12,8 @@ import urllib.error
 from datetime import datetime, timedelta
 import html
 import re
+import json
+import os
 
 # Keywords to filter for micromobility
 MICROMOBILITY_KEYWORDS = [
@@ -41,7 +43,13 @@ RSS_FEEDS = {
     "Electrek": {
         "url": "https://electrek.co/feed/",
     },
+    "TechCrunch": {
+        "url": "https://techcrunch.com/tag/micromobility/feed/",
+    },
 }
+
+# File to store previously reported articles (for deduplication)
+HISTORY_FILE = "/home/wolfbull/.openclaw/workspace-mars/projects/industry_research/data/reported_articles.json"
 
 def is_relevant(title, description):
     """Check if article is micromobility related"""
@@ -174,6 +182,35 @@ def fetch_micromobility_io(days_back=7):
         print(f"  Error fetching micromobility.io: {e}")
         return []
 
+def load_reported_articles():
+    """Load previously reported article links from history file"""
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, 'r') as f:
+                data = json.load(f)
+                return set(data.get('links', []))
+        except:
+            pass
+    return set()
+
+def save_reported_articles(news_items):
+    """Save current article links to history file"""
+    existing = load_reported_articles()
+    for item in news_items:
+        if item.get('link'):
+            existing.add(item['link'])
+    
+    with open(HISTORY_FILE, 'w') as f:
+        json.dump({'links': list(existing)}, f)
+
+def filter_duplicates(news_items):
+    """Filter out articles that were already reported"""
+    reported = load_reported_articles()
+    original_count = len(news_items)
+    filtered = [item for item in news_items if item.get('link') not in reported]
+    removed = original_count - len(filtered)
+    return filtered, removed
+
 def main():
     print("=" * 70)
     print("🪐 Micromobility Industry News Aggregator")
@@ -208,6 +245,14 @@ def main():
             all_news.append(item)
     else:
         print("   No articles found")
+    
+    # Filter duplicates (remove articles already reported in previous weeks)
+    all_news, removed_count = filter_duplicates(all_news)
+    if removed_count > 0:
+        print(f"\n🗑️  Filtered {removed_count} duplicate articles (already in previous weeks)")
+    
+    # Save current articles to history for next week
+    save_reported_articles(all_news)
     
     # Sort by date
     all_news.sort(key=lambda x: x['pub_date'] or "", reverse=True)
